@@ -1,0 +1,37 @@
+/*
+ * ledver.c
+ *
+ *  Created on: Apr 1, 2024
+ *      Author: cherikiansh
+ */
+
+
+#include "ledver.h"
+#include "stm32f4xx.h"
+void LedInit(uint32_t pin)
+{
+	RCC->AHB1ENR |=BV(LED_GPIO_EN);
+	LED_GPIO->MODER &=~(BV(pin*2+1));
+	LED_GPIO->MODER |=BV(pin*2);
+	LED_GPIO->OSPEEDR &= ~(BV(pin*2) | BV(pin*2+1));
+	LED_GPIO->PUPDR &= ~(BV(pin*2) | BV(pin*2+1));
+	LED_GPIO->OTYPER &= ~BV(pin);
+
+}
+
+void Ledon(uint32_t pin)
+{
+	LED_GPIO->ODR |= BV(pin);
+}
+
+void Ledoff(uint32_t pin)
+{
+	LED_GPIO->ODR &= ~BV(pin);
+}
+
+void BlinkLed(uint32_t pin , uint32_t delay)
+{
+	Ledon(pin);
+	DelayMs(delay);
+	Ledoff(pin);
+}
